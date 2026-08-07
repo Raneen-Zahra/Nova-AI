@@ -1,33 +1,54 @@
-# retriever.py
+import json
+import numpy as np
+from vector_store import embed_text, EMBEDDINGS_FILE
 
-import chromadb
-from vector_store import GeminiEmbeddingFunction
-
-CHROMA_PATH = "./chroma_db"
-COLLECTION_NAME = "my_rag_notes_v3"
 TOP_K = 5
 
 
 class Retriever:
     def __init__(self, top_k: int = TOP_K):
         self.top_k = top_k
-        self.client = chromadb.PersistentClient(path=CHROMA_PATH)
-        self.embedding_fn = GeminiEmbeddingFunction()
-        self.collection = self.client.get_collection(
-            name=COLLECTION_NAME,
-            embedding_function=self.embedding_fn
-        )
+        self.documents = self._load_index()
+
+    def _load_index(self) -> list[dict]:
+        try:
+            with open(EMBEDDINGS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print("[Retriever Warning]: No embeddings.json found. Run vector_store.py first.")
+            return []
+
+    @staticmethod
+    def _cosine_similarity(a: list[float], b: list[float]) -> float:
+        a = np.array(a)
+        b = np.array(b)
+        denom = (np.linalg.norm(a) * np.linalg.norm(b))
+        if denom == 0:
+            return 0.0
+        return float(np.dot(a, b) / denom)
 
     def retrieve(self, query: str, top_k: int = None) -> list[dict]:
+        """
+        Embeds the query and returns the top matching chunks,
+        ranked by cosine similarity (highest first).
+        """
+        if not self.documents:
+            return []
+
         k = top_k or self.top_k
-        results = self.collection.query(query_texts=[query], n_results=k)
-        docs = results.get("documents", [[]])[0]
-        metadatas = results.get("metadatas", [[]])[0]
-        distances = results.get("distances", [[]])[0]
-        return [
-            {"text": doc, "metadata": meta, "distance": dist}
-            for doc, meta, dist in zip(docs, metadatas, distances)
-        ]
+        query_embedding = embed_text(query)
+
+        scored = []
+        for doc in self.documents:
+            similarity = self._cosine_similarity(query_embedding, doc["embedding"])
+            scored.append({
+                "text": doc["text"],
+                "metadata": {"source": doc["source"]},
+                "distance": 1 - similarity,  # keep same "distance" semantics as before (lower = closer)
+            })
+
+        scored.sort(key=lambda x: x["distance"])
+        return scored[:k]
 
     def format_context(self, retrieved_chunks: list[dict]) -> str:
         if not retrieved_chunks:
@@ -36,3 +57,19 @@ class Retriever:
             f"[Chunk {i+1}]\n{chunk['text']}"
             for i, chunk in enumerate(retrieved_chunks)
         )
+
+
+# --- Quick manual test ---
+if __name__ == "__main__":
+    retriever = Retriever(top_k=3)
+    test_query = "What is this document about?"
+
+    results = retriever.retrieve(test_query)
+    print(f"Retrieved {len(results)} chunks for query: '{test_query}'\n")
+
+    for i, r in enumerate(results):
+        print(f"--- Chunk {i+1} (distance: {r['distance']:.4f}) ---")
+        print(r["text"][:200], "...\n")
+
+    print("=== Formatted context for prompt injection ===")
+    print(retriever.format_context(results))
