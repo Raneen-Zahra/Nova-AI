@@ -1,0 +1,9 @@
+Project Aegis is scheduled for deployment on October 15.
+The lead engineer on the project is Sarah Connor.
+The primary API endpoint server address is 192.168.1.150.
+
+RAG (Retrieval-Augmented Generation) allows local documents to be searched semantically.
+It connects vector embeddings to large language models for precise factual grounding.
+
+Raneen is the developer of nova and she is an IT 7th semester student at Thal University Bhakkar. 
+She loves to do things and innovations using AI tools.

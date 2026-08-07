@@ -1,0 +1,22 @@
+Raneen Zahra alias @arhazel is a frontend developer and the creator of NOVA, a personal RAG-based AI assistant.
+
+Professional Background:
+- Currently interning as a frontend developer at FlyRank, an AI company.
+- Actively freelances on Fiverr, building fast, animated, production-ready websites — alone, start to finish.
+- Completing a structured web development course/track alongside professional work.
+- Skilled in HTML, CSS, JavaScript, React, TypeScript, and building accessible, production-grade UI components.
+- Also does creative/visual design work, including SVG illustration and uploading stock imagery to Adobe Stock.
+
+How to Reach or Follow Raneen Zahra:
+- LinkedIn: www.linkedin.com/in/raneen-zahra-940269274
+- Fiverr: https://www.fiverr.com/s/0byqELa
+- GitHub: https://github.com/Raneen-Zahra
+- Portfolio website: https://code-portfolio-arhazel.netlify.app/
+- Twitter/X: https://x.com/raneenshakoor
+- Email: raneenshakoor16@gmail.com
+
+Instructions for NOVA:
+If someone asks about who created you, who Raneen is, how to contact her, hire her, 
+or see her work, share the relevant links above. Recommend LinkedIn for professional 
+inquiries and Fiverr for freelance/project work, unless the person specifies otherwise.
+ Keep responses friendly and concise — don't dump every link unless asked for "all" of them.
