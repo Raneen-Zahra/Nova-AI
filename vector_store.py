@@ -13,7 +13,7 @@ if not api_key:
 
 genai_client = genai.Client(api_key=api_key)
 
-EMBEDDINGS_FILE = "./embeddings.json"
+EMBEDDINGS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "embeddings.json")
 
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=20))
